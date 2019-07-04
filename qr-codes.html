@@ -1,0 +1,169 @@
+﻿<html>
+<head>
+<style type='text/css'>
+ body { font-family: Sans-Serif; }
+ h2
+ {
+  color: rgb(49,132,155);
+  margin-top: 2em;
+ }
+ table.mt
+ {
+  border-left: 0;
+  border-right: 0;
+  border-top: 2px solid rgb(49,132,155);
+  border-bottom: 2px solid rgb(49,132,155);
+  color: rgb(49,132,155);
+  margin-top: 2em;
+ }
+ table.mt tr td
+ {
+  vertical-align: top;
+ }
+ table.mt tr.stripe { background-color: rgb(210,234,241); }
+ table.mt tr.header td
+ {
+  font-weight: bold;
+  border-bottom: 2px solid rgb(49,132,155);
+ }
+ .example { font-style: italic; }
+ .def { font-weight: bold; }
+ .tldr
+ {
+  margin-left: 6em;
+ }
+</style>
+<title>Using QR Codes with Sipnetic</title>
+</head>
+<body>
+
+Starting from version 1.0.20, Sipnetic allows you to create an account by scanning a QR code.
+This code must contain a text string describing the account’s parameters, such as SIP domain, username and an optional password.
+
+<h2>TL;DR</h2>
+
+Here is an example of account description string and the corresponding QR code:
+<p class='tldr'>
+n=John Doe;u=jdoe;d=mydomain.com;p=TopSecret!;
+</p>
+<p class='tldr'>
+<img style='margin-left: -30px;' alt="QR Code" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsAgMAAAAEE2bmAAAADFBMVEUAAAASEhLq6ur///8Vx4YEAAABhUlEQVR4Xu3csWrFMAxG4ewd/P5v6aF7eosxijiB/6bcqRxBgpvK3yRQHLs9zs/FP7C0tLS0tLS0tLS+j2uMFzBf9xVzP1tPkZstLa2vs9zxO7/ubYTctywtrV2T6/ezV22JyH1iaWmxVsucH7C0tM49F303W1paudfua0dV7fO+raV1ibJwPVp3aGmFaH12jRHJ0tKarU4xLgWVmy0tLVbmvI6gnOUES0tr5aFql97Wo8wewdLSKuF+hTCQUVewtLRWtDkti99tW/1GS0sLc0cTLhK6QLS0tEpcKoRZessNlpZW7wllsvvurIpsaWltB8ZSUSvtWbC0tJiN7xtlYZczWFpazOf73GBffmZpaXWNvRf7BO9aWlpVlRPG6B7rl5aWFqLsNkZH3josLa101qdmoVKxDwBLSyucVQw7nPgZlpZWOMuPzot3ub9bWlrcP7jf6XxoaWlxbomT/ZiWllb+WxGcv+D6YbJ3aGnltQLWnKzVFveWlpb/D0ZLS0tLS0tLS+sHwYcc4En3Xh8AAAAASUVORK5CYII=" />
+</p>
+In this example, the SIP domain is <b>“mydomain.com”</b>, the user is <b>“jdoe”</b> with display name <b>“John Doe”</b>
+and password <b>“TopSecret!”</b>.
+<br><br>
+Another example:
+<p class='tldr'>
+u=3001;d=my-pbx.net;st=stun.my-pbx.net;
+</p>
+<p class='tldr'>
+<img style='margin-left: -30px;' alt="QR Code" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsAgMAAAAEE2bmAAAADFBMVEUAAAASEhLq6ur///8Vx4YEAAABg0lEQVR4Xu3cwWoDMQyEYd978Pu/pQ69p6UrmAxiGbPtqfyCxHZW/nIRCC+brNffxT+wsLCwsLCwsLCwPtd77B+gvsfSvN9nbrawsD5ecvebU21Ls9xDCwuruvZ0vSVfWe4TCwur3R7l1e8tLKze1eFdJFlYWLnXqlJtth71bSwsxaXcvzw3W1hYM+pStWppRLSwsMrqVLM9zwteuUcWFta2XO8fLo2IFhbWMk1jzbr178sWFpZJ7pVJHW1kCwtL1ar9a1Sl1i5mCwtLu1WroZI7koWFNe+daa2xQzuChYV1X6kl1T+JfVsWFtb9GXTZzPJkJAsLSzWqmZnzHlu70cLCmnv3PJW6ITlZWFjqpRpnNY5qrTMLC8v7hHTZ0jwnWlhYCre18lkFCwsrPuvTc7sXMq5FCwtrPn9oUq/Mvu+1WFj5Wf6tTD+NSn1qYWGNnuF+yXhgYWEt03xU7GlhYR3/VtcFr8/OyRYW1k0XlVe2XmfnDiws/g8GCwsLCwsLCwvrC/GJvEDjCsGrAAAAAElFTkSuQmCC" />
+</p>
+This string describes the account <b>3001@my-pbx.net</b> with STUN server <b>stun.my-pbx.net</b>.
+Since it does not include a password, Sipnetic will show a prompt asking you to provide it.
+
+<h2>Account String Format</h2>
+
+Sipnetic account description is a string consisting of a number of attributes having key=value format and separated by semicolons.
+If you need to insert a literal semicolon it must be doubled. For example in <b>a=12;;345;</b> the attribute name
+is <b>a</b> and its value is <b>12;345</b>. Attribute names are case-sensitive, i.e. <b>R</b> and <b>r</b> are two different attributes.
+The full set of supported attributes is listed below.
+
+<table class='mt' cellspacing='0' cellpadding='10'>
+
+<tr class='header'>
+<td>Attribute</td>
+<td>Allowed Values</td>
+<td>Description</td>
+</tr>
+
+<tr class='stripe'>
+<td class='def'>d</td>
+<td>Hostname or IP address without port</td>
+<td>Account’s domain part. Must be always included.<br>
+<span class='example'>Example: </span>d=mydomain.com;
+</td>
+</tr>
+
+<tr>
+<td class='def'>u</td>
+<td>SIP username</td>
+<td>Account’s user part. If it’s not included, the app will display a prompt asking you to enter SIP credentials.<br>
+<span class='example'>Example: </span>u=100;
+</td>
+</tr>
+
+<tr class='stripe'>
+<td class='def'>p</td>
+<td>Non-empty string</td>
+<td>Account’s password. If it’s not included, the app will display a prompt asking you to enter the password.</td>
+</tr>
+
+<tr>
+<td class='def'>n</td>
+<td>Any string</td>
+<td>Account’s display name. Can be empty.<br>
+<span class='example'>Example: </span>n=John Doe;
+</td>
+</tr>
+
+<tr class='stripe'>
+<td class='def'>au</td>
+<td>SIP username</td>
+<td>Authentication name. Should be set only if it differs from username.</td>
+</tr>
+
+<tr>
+<td class='def'>R</td>
+<td>0 or 1</td>
+<td>Enable or disable registration. Default is 1 (enable registration).
+Use R=0 to create an account without registration.
+</td>
+</tr>
+
+<tr class='stripe'>
+<td class='def'>dt</td>
+<td>0, 1 or 2</td>
+<td>Default transport: 0 – UDP, 1 – TCP, 2 – TLS.<br>
+<span class='example'>Example: </span>dt=2;
+</td>
+</tr>
+
+<tr>
+<td class='def'>op</td>
+<td>Hostname or IP address with optional port<br>
+<b>#none</b><br>
+<b>#reg</b>
+</td>
+<td>Outbound proxy. It can be either an address (with optional port separated by colon),
+or one of the special values <b>#none</b> (no proxy) or <b>#reg</b> (use registrar as a proxy).
+Default is <b>#none</b>.<br>
+<span class='example'>Example: </span>op=192.168.1.4:5080;
+</td>
+</tr>
+
+<tr class='stripe'>
+<td class='def'>st</td>
+<td>Hostname or IP address without port<br>
+STUN or TURN URI<br>
+<b>#none</b><br>
+<b>#def</b><br>
+</td>
+<td>
+STUN or TURN server. It can be an address without port, a URI with stun or turn scheme,
+or one of the special values <b>#none</b> (disable STUN) or <b>#def</b> (use default STUN server).
+If a URI is used, it may include username and password.<br>
+<span class='example'>Example: </span>st=stun.mydomain.com;<br>
+<span class='example'>Example: </span>st=turn:user:password@turn.mydomain.com;
+</td>
+</tr>
+
+<tr>
+<td class='def'>exp</td>
+<td>Number between 120 and 7200</td>
+<td>Registration expire value in seconds. Default is 600 (10 minutes).</td>
+</tr>
+</table>
+
+</body>
+</html>
